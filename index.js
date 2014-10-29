@@ -1,6 +1,15 @@
 var Immutable = require('immutable');
 
+function isImmutable(obj) {
+  return (obj instanceof Immutable.Sequence);
+}
+
 function History(immutableCollection, changed) {
+  // accept an immutablejs object or js object
+  if (!isImmutable(immutableCollection)) {
+    immutableCollection = Immutable.fromJS(immutableCollection);
+  }
+
   this.history = Immutable.Vector(immutableCollection)
   this.changed = changed;
   var self = this;
@@ -12,6 +21,7 @@ function History(immutableCollection, changed) {
   }
 
   this.cursor = immutableCollection.cursor([], self.onChange);
+  this.changed(self.cursor);
 }
 
 History.prototype.at = function(index) {

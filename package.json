@@ -1,14 +1,20 @@
 {
   "name": "immutable-history",
   "version": "0.1.0",
+  "author": "Jamison Dance <jergason@gmail.com> (http://jamisondance.com)",
+  "contributors": [
+    "Sean Hess <seanhess@gmail.com> (http://seanhess.github.io/)"
+  ],
   "description": "History tracking wrapper for Immutable.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/*"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "immutable": "2.2.3"
+  },
+  "devDependencies": {
+    "mocha": "^2.0.1"
   }
 }
