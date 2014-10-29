@@ -5,6 +5,12 @@ function isImmutable(obj) {
 }
 
 function History(immutableCollection, changed) {
+
+  // if constructor wasn't called with new, call it with new!
+  if (!this instanceof History) {
+    return new History(immutableCollection, changed);
+  }
+
   // accept an immutablejs object or js object
   if (!isImmutable(immutableCollection)) {
     immutableCollection = Immutable.fromJS(immutableCollection);
@@ -21,7 +27,7 @@ function History(immutableCollection, changed) {
   }
 
   this.cursor = immutableCollection.cursor([], self.onChange);
-  this.changed(self.cursor);
+  this.changed(this.cursor);
 }
 
 History.prototype.at = function(index) {
