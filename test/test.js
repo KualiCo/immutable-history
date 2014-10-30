@@ -67,8 +67,8 @@ describe('History', function() {
       return "newValue";
     })
   });
-
 });
+
 //var data = Immutable.fromJS({a: 1, b: 2, c: [1,2,3]});
 
 //var history = new History(data, render);

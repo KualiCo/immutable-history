@@ -33,6 +33,9 @@ function History(immutableCollection, changed) {
     self._emitChange()
   }
 
+  // allows this to be passed around
+  this.onChange = this.onChange.bind(this)
+
   this.cursor = Cursor.from(immutableCollection, [], self._onChange);
   this._emitChange()
 }
