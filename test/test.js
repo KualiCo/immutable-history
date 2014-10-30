@@ -48,7 +48,7 @@ describe('History', function() {
       var data = Immutable.fromJS([1,2,3,4]);
       var h = new History(data, function() {});
       assert.equal(h.history.get(0), data);
-      assert.equal(h.history.length, 1);
+      assert.equal(h.history.count(), 1);
     });
   });
 

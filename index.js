@@ -1,7 +1,8 @@
 var Immutable = require('immutable');
+var Cursor = require('immutable/contrib/cursor');
 
 function isImmutable(obj) {
-  return (obj instanceof Immutable.Sequence);
+  return (obj instanceof Immutable.Seq);
 }
 
 function History(immutableCollection, changed) {
@@ -16,22 +17,24 @@ function History(immutableCollection, changed) {
     immutableCollection = Immutable.fromJS(immutableCollection);
   }
 
-  this.history = Immutable.Vector(immutableCollection)
+  // Immutable.List will coerce other data types to a list, and will
+  // silently fail to wrap a List in another list, so we do it ourselves
+  this.history = Immutable.List([immutableCollection]);
   this.changed = changed;
   var self = this;
 
   this.onChange = function(newData, oldData, path) {
     self.history = self.history.push(newData);
-    self.cursor = newData.cursor([], self.onChange);
+    self.cursor = Cursor.from(newData, [], self.onChange);
     self.changed(self.cursor);
   }
 
-  this.cursor = immutableCollection.cursor([], self.onChange);
+  this.cursor = Cursor.from(immutableCollection, [], self.onChange);
   this.changed(this.cursor);
 }
 
 History.prototype.at = function(index) {
-  return this.history.get(this.history.length + index - 1);
+  return this.history.get(this.history.count() + index - 1);
 };
 
 History.prototype.previousVersion = function() {
@@ -41,9 +44,9 @@ History.prototype.previousVersion = function() {
 History.prototype.undoUntilData = function(data) {
   this.history = this.history.takeWhile(function(v) {
     return v != data;
-  }).toVector().push(data);
+  }).toList().push(data);
   var newData = data;
-  this.cursor = data.cursor([], this.onChange);
+  this.cursor = Cursor.from(data, [], this.onChange);
   this.changed(this.cursor);
   return data;
 }

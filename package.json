@@ -12,7 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "immutable": "2.2.3"
+    "immutable": "3.0.1"
   },
   "devDependencies": {
     "mocha": "^2.0.1"
