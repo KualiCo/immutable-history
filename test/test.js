@@ -53,7 +53,21 @@ describe('History', function() {
   });
 
   it('appends to this.history when the cursor is changed', function() {
+
   });
+
+  it('emits an update event', function(done) {
+    var data = Immutable.fromJS({key:"value"})
+    var h = new History(data, function() {});
+    h.on('change', function(cursor) {
+      assert.equal(cursor.get('key'), "newValue");
+      done();
+    })
+    h.cursor.cursor('key').update(function(v) {
+      return "newValue";
+    })
+  });
+
 });
 //var data = Immutable.fromJS({a: 1, b: 2, c: [1,2,3]});
 
