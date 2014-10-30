@@ -1,5 +1,8 @@
 var Immutable = require('immutable');
 var Cursor = require('immutable/contrib/cursor');
+var events = require('events')
+
+var EVENT_CHANGE = 'change'
 
 function isImmutable(obj) {
   return (obj instanceof Immutable.Seq);
@@ -20,18 +23,28 @@ function History(immutableCollection, changed) {
   // Immutable.List will coerce other data types to a list, and will
   // silently fail to wrap a List in another list, so we do it ourselves
   this.history = Immutable.List([immutableCollection]);
+  this.emitter = new events.EventEmitter();
   this.changed = changed;
   var self = this;
 
-  this.onChange = function(newData, oldData, path) {
+  this._onChange = function(newData, oldData, path) {
     self.history = self.history.push(newData);
-    self.cursor = Cursor.from(newData, [], self.onChange);
-    self.changed(self.cursor);
+    self.cursor = Cursor.from(newData, [], self._onChange);
+    self._emitChange()
   }
 
-  this.cursor = Cursor.from(immutableCollection, [], self.onChange);
-  this.changed(this.cursor);
+  // allows this to be passed around
+  this.onChange = this.onChange.bind(this)
+
+  this.cursor = Cursor.from(immutableCollection, [], self._onChange);
+  this._emitChange()
 }
+
+History.prototype._emitChange = function() {
+  this.changed(this.cursor);
+  this.emitter.emit(EVENT_CHANGE, this.cursor)
+}
+
 
 History.prototype.at = function(index) {
   return this.history.get(this.history.count() + index - 1);
@@ -46,13 +59,17 @@ History.prototype.undoUntilData = function(data) {
     return v != data;
   }).toList().push(data);
   var newData = data;
-  this.cursor = Cursor.from(data, [], this.onChange);
-  this.changed(this.cursor);
+  this.cursor = Cursor.from(data, [], this._onChange);
+  self._emitChange()
   return data;
 }
 
 History.prototype.undo = function() {
   return this.undoUntilData(this.previousVersion());
+}
+
+History.prototype.onChange = function(handler) {
+  return this.emitter.on(EVENT_CHANGE, handler);
 }
 
 module.exports = History;
