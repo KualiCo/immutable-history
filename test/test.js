@@ -59,7 +59,7 @@ describe('History', function() {
   it('emits an update event', function(done) {
     var data = Immutable.fromJS({key:"value"})
     var h = new History(data, function() {});
-    h.on('change', function(cursor) {
+    h.onChange(function(cursor) {
       assert.equal(cursor.get('key'), "newValue");
       done();
     })

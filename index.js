@@ -2,6 +2,8 @@ var Immutable = require('immutable');
 var Cursor = require('immutable/contrib/cursor');
 var events = require('events')
 
+var EVENT_CHANGE = 'change'
+
 function isImmutable(obj) {
   return (obj instanceof Immutable.Seq);
 }
@@ -25,19 +27,19 @@ function History(immutableCollection, changed) {
   this.changed = changed;
   var self = this;
 
-  this.onChange = function(newData, oldData, path) {
+  this._onChange = function(newData, oldData, path) {
     self.history = self.history.push(newData);
-    self.cursor = Cursor.from(newData, [], self.onChange);
-    self._didChange()
+    self.cursor = Cursor.from(newData, [], self._onChange);
+    self._emitChange()
   }
 
-  this.cursor = Cursor.from(immutableCollection, [], self.onChange);
-  this._didChange()
+  this.cursor = Cursor.from(immutableCollection, [], self._onChange);
+  this._emitChange()
 }
 
-History.prototype._didChange = function() {
+History.prototype._emitChange = function() {
   this.changed(this.cursor);
-  this.emitter.emit('change', this.cursor)
+  this.emitter.emit(EVENT_CHANGE, this.cursor)
 }
 
 
@@ -54,8 +56,8 @@ History.prototype.undoUntilData = function(data) {
     return v != data;
   }).toList().push(data);
   var newData = data;
-  this.cursor = Cursor.from(data, [], this.onChange);
-  self._didChange()
+  this.cursor = Cursor.from(data, [], this._onChange);
+  self._emitChange()
   return data;
 }
 
@@ -63,8 +65,8 @@ History.prototype.undo = function() {
   return this.undoUntilData(this.previousVersion());
 }
 
-History.prototype.on = function(event, handler) {
-  return this.emitter.on(event, handler);
+History.prototype.onChange = function(handler) {
+  return this.emitter.on(EVENT_CHANGE, handler);
 }
 
 module.exports = History;
