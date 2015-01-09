@@ -31,7 +31,7 @@ function render(cursor) {
   console.log('rendering');
   setTimeout(function() {
     var powers = cursor.get(['powers']);
-    if (powers.length < 5) {
+    if (powers.size < 5) {
       powers.update(function(oldValue) {
         return oldValue.push('EVEN MORE MUSCLES');
       });
@@ -51,5 +51,5 @@ is called whenever the state is updated. The history object stores a stack
 of all previous states, so you can undo back through the previous states.
 
 Any changes to the data in the cursor will trigger the callback again. This
-is useful with react, where you need to re-render some component heirarchy 
+is useful with react, where you need to re-render some component heirarchy
 when your app state changes.
