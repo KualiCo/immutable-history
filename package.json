@@ -1,4 +1,11 @@
 {
+  "name": "immutable-history",
+  "version": "0.2.1",
+  "author": "Jamison Dance <jergason@gmail.com> (http://jamisondance.com)",
+  "repository": "https://github.com/kualico/immutable-history",
+  "contributors": [
+    "Sean Hess <seanhess@gmail.com> (http://seanhess.github.io/)"
+  ],
   "description": "History tracking wrapper for Immutable.js",
   "main": "index.js",
   "scripts": {
