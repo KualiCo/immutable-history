@@ -13,7 +13,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "immutable": "3.0.1"
+    "immutable": "3.0.1",
+    "immutable-cursor": "git://github.com/redbadger/immutable-cursor"
   },
   "devDependencies": {
     "mocha": "^2.0.1"

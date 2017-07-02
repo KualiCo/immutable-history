@@ -1,5 +1,5 @@
 var Immutable = require('immutable');
-var Cursor = require('immutable/contrib/cursor');
+var Cursor = require('immutable-cursor');
 var events = require('events')
 
 var EVENT_CHANGE = 'change'
