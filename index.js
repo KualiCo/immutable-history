@@ -23,12 +23,14 @@ function History(immutableCollection, changed) {
   // Immutable.List will coerce other data types to a list, and will
   // silently fail to wrap a List in another list, so we do it ourselves
   this.history = Immutable.List([immutableCollection]);
+  this.forwardHistory = Immutable.List([]);
   this.emitter = new events.EventEmitter();
   this.changed = changed;
   var self = this;
 
   this._onChange = function(newData, oldData, path) {
     self.history = self.history.push(newData);
+    self.forwardHistory.clear();
     self.cursor = Cursor.from(newData, [], self._onChange);
     self._emitChange()
   }
@@ -58,14 +60,26 @@ History.prototype.undoUntilData = function(data) {
   this.history = this.history.takeWhile(function(v) {
     return v != data;
   }).toList().push(data);
-  var newData = data;
   this.cursor = Cursor.from(data, [], this._onChange);
-  self._emitChange()
+  this._emitChange()
   return data;
 }
 
 History.prototype.undo = function() {
+  this.forwardHistory = this.forwardHistory.push(this.history.last());
   return this.undoUntilData(this.previousVersion());
+}
+
+History.prototype.redo = function() {
+  if(this.forwardHistory.count() == 0)
+    return this.history.last();
+
+  data = this.forwardHistory.last();
+  this.forwardHistory = this.forwardHistory.pop();
+  this.history = this.history.push(data);
+  this.cursor = Cursor.from(data, [], this._onChange);
+  this._emitChange();
+  return data;
 }
 
 History.prototype.onChange = function(handler) {

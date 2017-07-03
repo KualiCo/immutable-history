@@ -12,6 +12,9 @@ It is inspired by ideas from [om](https://github.com/swannodette/om) and works
 great with [React](https://github.com/facebook/react) but you can use it for
 `(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧ A N Y T H I N G (ಥ﹏ಥ)`!
 
+### This fork has been updated with the added ability to "redo"
+tests have been added for the new functionlity. The Usage code below has been updated as well.
+
 
 ## Installation
 
@@ -38,6 +41,8 @@ function render(cursor) {
     } else {
       // go back to the previous state of the cursor
       history.undo()
+      //go forward to the the state you just undo'd from
+      history.redo()
     }
   }, 500);
   console.log(cursor);

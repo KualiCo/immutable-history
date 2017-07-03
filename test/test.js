@@ -53,7 +53,7 @@ describe('History', function() {
   });
 
   it('appends to this.history when the cursor is changed', function() {
-
+  
   });
 
   it('emits an update event', function(done) {
@@ -67,22 +67,40 @@ describe('History', function() {
       return "newValue";
     })
   });
+
+  it('undo/redo works', function() {
+      var data = Immutable.fromJS({key:"value"})
+      var h = new History(data, function() {});
+      h.cursor.cursor('key').update(function(v) {
+        return "newValue";
+      })
+      h.cursor.cursor('key').update(function(v) {
+        return "newValue1";
+      })
+      h.cursor.cursor('key').update(function(v) {
+        return "newValue2";
+      })
+      assert.equal(h.cursor.get('key'), "newValue2");
+      h.undo();
+      assert.equal(h.cursor.get('key'), "newValue1");
+      h.redo();
+      assert.equal(h.cursor.get('key'), "newValue2");
+      h.undo();
+      assert.equal(h.cursor.get('key'), "newValue1");
+      h.undo();
+      assert.equal(h.cursor.get('key'), "newValue");
+      h.redo();
+      assert.equal(h.cursor.get('key'), "newValue1");
+      h.cursor.cursor('key').update(function(v) {
+        return "newValue3";
+      })
+      assert.equal(h.cursor.get('key'), "newValue3");
+      h.undo();
+      assert.equal(h.cursor.get('key'), "newValue1");
+  });
+
+
+
 });
 
-//var data = Immutable.fromJS({a: 1, b: 2, c: [1,2,3]});
 
-//var history = new History(data, render);
-//var state = history.cursor;
-
-//var hist = history(data, render)
-//hist = history.undo(hist)
-
-//function render(cursor) {
-  //console.log(cursor.deref());
-//}
-
-//state.cursor(['c']).update(function(val) {
-  //return Immutable.fromJS([1,2]);
-//});
-
-//history.undo()
